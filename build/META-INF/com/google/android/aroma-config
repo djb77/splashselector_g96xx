@@ -1,0 +1,139 @@
+# --------------------------------
+# SPLASH SELECTOR INSTALLER 1.0.0
+# Created by @djb77
+# --------------------------------
+
+# INFO
+# ----
+ini_set("force_colorspace","rgba");
+ini_set("rom_name", "Splash Selector");
+ini_set("rom_version", "");
+ini_set("rom_author", "djb77");
+ini_set("rom_device", "SM-G96XX");
+ini_set("rom_date", "");
+
+# SETUP
+# -----
+writetmpfile("backup.prop","install=0");
+writetmpfile("backuperror.prop","install=1");
+writetmpfile("g960x.prop","install=0");
+writetmpfile("g965x.prop","install=0");
+writetmpfile("ss-backup.prop","install=0");
+writetmpfile("ss-restore.prop","install=0");
+writetmpfile("ss-stock.prop","install=0");
+writetmpfile("ss-01.prop","install=0");
+writetmpfile("ss-02.prop","install=0");
+writetmpfile("ss-03.prop","install=0");
+
+# SET LANGUAGE
+# ------------
+loadlang("langs/en.lang");
+
+# FONT AND THEME SELETION
+# -----------------------
+fontresload( "0", "ttf/Roboto-Regular.ttf;ttf/DroidSansArabic.ttf;ttf/DroidSansFallback.ttf;", "12" ); #-- Use sets of font (Font Family)
+theme("tgp");
+
+# SET LANGUAGE & FONT FAMILY
+# --------------------------
+loadlang("langs/en.lang");
+fontresload( "0", "ttf/Roboto-Regular.ttf", "12" ); #-- "0" = Small Font ( Look at Fonts & UNICODE Demo Below )
+fontresload( "1", "ttf/Roboto-Regular.ttf", "18" ); #-- "1" = Big Font
+
+# INSTALLER SETUP
+# ---------------
+restotmp("files/tar","tar");
+restotmp("files/ss.sh","ss.sh");
+exec("/tmp/aroma/ss.sh","setup","","");
+
+# CHECK FOR BACKUP
+# ---------------
+exec("/tmp/aroma/ss.sh","backup_check","","");
+if (prop("backup.prop","install")=="1") then
+	setvar(
+	"backup_text",
+	"<b>SPLASH SCREEN BACKUP FOUND</b>\n\n"+
+	"The installer has located a backed up Splash Screen in the s-selector folder on your Internal Memory.\n\n"+
+	"You will now be given an option to restore this backup and proceed straight to the installer, "+
+	"skipping all the installation selection screens.\n\n"+
+	"Press the <b>Next</b> button, then select <b>Yes</b> or <b>No</b> on the Popup Dialog Box."+
+	""
+	);
+	textbox(
+	"SPLASH SELECTOR FOR S9",
+	" ",
+	"@deafult",
+	getvar("backup_text")
+	);
+	if
+		confirm(
+		"SPLASH SELECTOR FOR S9",
+		"Would you like to use your current backup?",
+		"@default"
+		)=="yes"
+	then
+		writetmpfile("ss-restore.prop","install=1");
+	else
+		writetmpfile("ss-restore.prop","install=0");
+	endif;
+endif;
+
+if (prop("ss-restore.prop","install")=="0") then
+
+# SPLASH SCREEN OPTIONS
+# --------------------
+	selectbox(
+		"SPLASH SELECTOR FOR S9",
+		"Splash Screen Options",
+		"",
+		"main.prop",
+		"Splash Screen Backup", "", 2,
+		"Yes, Backup my Splash Screen", "", 1,
+		"No, Backup my Splash Screen", "", 0,
+		"Available Splash Screens", "", 2,
+		"Stock (Original)", "", 1,
+		"TGPKernel", "", 0,
+		"Android", "", 0,
+		"Android pissing on Apple", "", 0
+	);
+	if (prop("main.prop","selected.1")=="1") then
+		writetmpfile("ss-backup.prop","install=1");
+	endif;
+	if (prop("main.prop","selected.2")=="1") then
+		writetmpfile("ss-stock.prop","install=1");
+	endif;
+	if (prop("main.prop","selected.2")=="2") then
+		writetmpfile("ss-01.prop","install=1");
+	endif;
+	if (prop("main.prop","selected.2")=="3") then
+		writetmpfile("ss-02.prop","install=1");
+	endif;
+	if (prop("main.prop","selected.2")=="4") then
+		writetmpfile("ss-03.prop","install=1");
+	endif;
+endif;
+
+# START INSTALLER
+# ---------------
+ini_set("text_next", "Install");
+ini_set("icon_next", "@installbutton");
+viewbox(
+	"SPLASH SELECTOR FOR S9",
+	"Press the Install button to begin the installation.\n\n"+
+	"To review or change any of your settings, press the Back button.",
+	""
+);
+
+# INSTALL PROCESS
+# --------------
+ini_set("text_next", "Finish");
+ini_set("icon_next", "@finish");
+setvar("retstatus",
+install(
+	"SPLASH SELECTOR FOR S9",
+	"Installing, Please Wait... This may take a while...",
+	"",
+	"The installation wizard has successfully finished. Press Finish to continue."
+)
+);
+

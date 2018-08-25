@@ -1,0 +1,106 @@
+# --------------------------------
+# SPLASH SELECTOR INSTALLER 1.0.0
+# Created by @djb77
+# --------------------------------
+
+# CHECK VARIANT
+# -------------
+if is_substring("G960", getprop("ro.boot.bootloader")) then
+	ui_print("Checking for Device Type, S9 Found");
+	run_program("/tmp/aroma/ss.sh", "check_g960x");
+endif;
+if is_substring("G965", getprop("ro.boot.bootloader")) then
+	ui_print("Checking for Device Type, S9+ Found");
+	run_program("/tmp/aroma/ss.sh", "check_g965x");
+endif;
+
+ui_print(" ");
+
+# BACKUP CONFIG
+# -------------
+if file_getprop("/tmp/aroma/ss-backup.prop","install") == "1" then
+	ui_print("Backing up Splash Screen");
+	run_program("/tmp/aroma/ss.sh", "backup");
+	ui_print(" ");
+endif;
+
+# RESTORE CONFIG
+# --------------
+if file_getprop("/tmp/aroma/ss-restore.prop","install") == "1" then
+	ui_print("Restoring Splash Screen");
+	run_program("/tmp/aroma/ss.sh", "restore");
+	if file_getprop("/tmp/aroma/backuperror.prop","install") == "1" then
+		ui_print("Error with backup, Flashing Aborted");
+	endif;
+	if file_getprop("/tmp/aroma/backuperror.prop","install") == "0" then
+		run_program("/tmp/aroma/ss.sh", "flash");
+	endif;
+	ui_print(" ");
+endif;
+
+# SPLASH SCREENS
+# --------------
+# STOCK SPLASH SCREEN
+if file_getprop("/tmp/aroma/ss-stock.prop","install") == "1" then
+	if file_getprop("/tmp/aroma/g960x.prop","install") == "1" then
+		ui_print("Flashing Stock Splash Screen for S9");
+		package_extract_dir("ss/960-stock", "/tmp/splash");
+		run_program("/tmp/aroma/ss.sh", "flash");
+	endif;
+	if file_getprop("/tmp/aroma/g965x.prop","install") == "1" then
+		ui_print("Flashing Stock Splash Screen for S9+");
+		package_extract_dir("ss/965-stock", "/tmp/splash");
+		run_program("/tmp/aroma/ss.sh", "flash");		
+	endif;
+endif;
+
+# TGPKERNEL SPLASH SCREEN
+if file_getprop("/tmp/aroma/ss-01.prop","install") == "1" then
+	if file_getprop("/tmp/aroma/g960x.prop","install") == "1" then
+		ui_print("Flashing Splash Screen for S9");
+		package_extract_dir("ss/960-tgpkernel", "/tmp/splash");
+		run_program("/tmp/aroma/ss.sh", "flash");
+	endif;
+	if file_getprop("/tmp/aroma/g965x.prop","install") == "1" then
+		ui_print("Flashing Splash Screen for S9+");
+		package_extract_dir("ss/965-tgpkernel", "/tmp/splash");
+		run_program("/tmp/aroma/ss.sh", "flash");		
+	endif;
+endif;
+
+# ANDROID SPLASH SCREEN
+if file_getprop("/tmp/aroma/ss-02.prop","install") == "1" then
+	if file_getprop("/tmp/aroma/g960x.prop","install") == "1" then
+		ui_print("Flashing Splash Screen for S9");
+		package_extract_dir("ss/960-android", "/tmp/splash");
+		run_program("/tmp/aroma/ss.sh", "flash");
+	endif;
+	if file_getprop("/tmp/aroma/g965x.prop","install") == "1" then
+		ui_print("Flashing Splash Screen for S9+");
+		package_extract_dir("ss/965-android", "/tmp/splash");
+		run_program("/tmp/aroma/ss.sh", "flash");		
+	endif;
+endif;
+
+# ANDROID PISSING ON APPLE SPLASH SCREEN
+if file_getprop("/tmp/aroma/ss-03.prop","install") == "1" then
+	if file_getprop("/tmp/aroma/g960x.prop","install") == "1" then
+		ui_print("Flashing Splash Screen for S9");
+		package_extract_dir("ss/960-apa", "/tmp/splash");
+		run_program("/tmp/aroma/ss.sh", "flash");
+	endif;
+	if file_getprop("/tmp/aroma/g965x.prop","install") == "1" then
+		ui_print("Flashing Splash Screen for S9+");
+		package_extract_dir("ss/965-apa", "/tmp/splash");
+		run_program("/tmp/aroma/ss.sh", "flash");		
+	endif;
+endif;
+
+# FINISH
+# ------
+ui_print(" ");
+ui_print("Installation Complete");
+ui_print(" ");
+
+set_progress(1);
+
